@@ -10,6 +10,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BitsAndPizzas">
         <activity
+            android:name=".OrderActivity"
+            android:label="@string/create_order"
+            android:parentActivityName=".MainActivity">
+<!--            This is to support older versions-->
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".MainActivity"
+                android:exported="true" />
+        </activity>
+
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
