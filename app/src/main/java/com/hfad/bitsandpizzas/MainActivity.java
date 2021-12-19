@@ -10,14 +10,23 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v7.widget.ShareActionProvider;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 public class MainActivity extends AppCompatActivity {
-
+    private String[] titles;
+    private ListView drawerList;
     private ShareActionProvider shareActionProvider;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        titles = getResources().getStringArray(R.array.titles);
+        drawerList = (ListView) findViewById(R.id.drawer);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1,titles);
+        drawerList.setAdapter(adapter);
     }
 
     @Override
