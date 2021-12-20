@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Bits and Pizzas</string>
+    <string name="app_name">Bits Pizzas</string>
     <string name="action_settings">Settings</string>
     <string name="action_create_order">Create Order</string>
     <string name="create_order">Create Order</string>
@@ -25,4 +25,6 @@
         <item>Pasta</item>
         <item>Stores</item>
     </string-array>
+    <string name= "nav_open">Open</string>
+    <string name= "nav_close">Close</string>
 </resources>
