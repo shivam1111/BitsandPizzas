@@ -1,8 +1,12 @@
 package com.hfad.bitsandpizzas;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
@@ -19,7 +23,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity  {
 
     private String[] titles;
     private ShareActionProvider shareActionProvider;
@@ -34,6 +38,41 @@ public class MainActivity extends AppCompatActivity {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             selectItem(position);
         }
+    }
+
+    private class DrawerListener  implements DrawerLayout.DrawerListener{
+
+        @Override
+        public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
+            // Action to onDrawerSlider
+        }
+
+        @Override
+        public void onDrawerOpened(@NonNull View drawerView) {
+            // Action to onDrawerOpened
+            Log.d("DrawerLayout","Open");
+            invalidateOptionsMenu();
+        }
+
+        @Override
+        public void onDrawerClosed(@NonNull View drawerView) {
+            // Action to onDrawerClosed
+            Log.d("DrawerLayout","Closed");
+            invalidateOptionsMenu();
+        }
+
+        @Override
+        public void onDrawerStateChanged(int newState) {
+            // Action to onDrawerStateChanged
+        }
+    }
+
+    //Called whenever we call invalidateOptionsMenu()
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        boolean drawerOpen = drawerLayout.isDrawerOpen(drawerList);
+        menu.findItem(R.id.action_share).setVisible(!drawerOpen);
+        return super.onPrepareOptionsMenu(menu);
     }
 
     public void selectItem(int position){
@@ -92,11 +131,24 @@ public class MainActivity extends AppCompatActivity {
         actionBarDrawerToggle = new ActionBarDrawerToggle(this,
                 drawerLayout,
                 R.string.nav_open,R.string.nav_close);
-
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
+        drawerLayout.addDrawerListener(actionBarDrawerToggle);
+        drawerLayout.addDrawerListener(new DrawerListener());
+
+    }
+
+    @Override
+    public void onPostCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
+        super.onPostCreate(savedInstanceState, persistentState);
+
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        actionBarDrawerToggle.onConfigurationChanged(newConfig);
     }
 
     @Override
