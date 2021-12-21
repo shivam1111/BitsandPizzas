@@ -157,6 +157,7 @@ public class MainActivity extends AppCompatActivity  {
         getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
             @Override
             public void onBackStackChanged() {
+                Log.d("BackStack",""+currentPosition);
                 Fragment fragment = getSupportFragmentManager().findFragmentByTag("visible_fragment");
                 if (fragment instanceof TopFragment){
                     currentPosition = 0;
@@ -174,8 +175,6 @@ public class MainActivity extends AppCompatActivity  {
                 drawerList.setItemChecked(currentPosition,true);
             }
         });
-
-
     }
 
     @Override
