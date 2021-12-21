@@ -8,6 +8,7 @@ import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -23,6 +24,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import java.util.Arrays;
+
 public class MainActivity extends AppCompatActivity  {
 
     private String[] titles;
@@ -31,6 +34,7 @@ public class MainActivity extends AppCompatActivity  {
     public ActionBarDrawerToggle actionBarDrawerToggle;
     public DrawerLayout drawerLayout;
     public ListView drawerList;
+    private int currentPosition = 0;
 
     //Implementation of DrawerLaout onClick Items
     private class DrawerItemClickListener implements AdapterView.OnItemClickListener{
@@ -93,16 +97,18 @@ public class MainActivity extends AppCompatActivity  {
                 fragment = new TopFragment();
         }
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.content_frame,fragment);
+        ft.replace(R.id.content_frame,fragment,"visible_fragment");
         ft.addToBackStack(null);
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
         ft.commit();
         // Set the action bar title
         setActionBarTitle(position);
         drawerLayout.closeDrawer(drawerList);
+        currentPosition = position;
     }
     private void setActionBarTitle(int position){
         String title;
+        Log.d(this.toString(),"Position "+position+" "+Arrays.toString(titles));
         if (position == 0){
             title = getResources().getString(R.string.app_name);
         }else{
@@ -114,9 +120,14 @@ public class MainActivity extends AppCompatActivity  {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
         // Get Titltes for DrawerLayout
         titles = getResources().getStringArray(R.array.titles);
+        if (savedInstanceState != null){
+            currentPosition = savedInstanceState.getInt("position");
+            setActionBarTitle(currentPosition);
+        }
+
+        setContentView(R.layout.activity_main);
         // Get ListView of the Drawer Layout
         drawerList = findViewById(R.id.drawer);
         // Array Adapter to populate the ListView of Drawer Layout
@@ -136,6 +147,34 @@ public class MainActivity extends AppCompatActivity  {
         actionBarDrawerToggle.syncState();
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         drawerLayout.addDrawerListener(new DrawerListener());
+
+        /*
+         Adding functionality for the back button
+         Whenever back button will be clicked the current fragment reference will be added to backsack
+         For that we need to add onBackStackChangedListener and add give instructions for whatever
+         has to be done
+         */
+        getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+            @Override
+            public void onBackStackChanged() {
+                Fragment fragment = getSupportFragmentManager().findFragmentByTag("visible_fragment");
+                if (fragment instanceof TopFragment){
+                    currentPosition = 0;
+                }
+                if (fragment instanceof PizzaFragment){
+                    currentPosition = 1;
+                }
+                if (fragment instanceof PastaFragment){
+                    currentPosition = 2;
+                }
+                if (fragment instanceof StoresFragment){
+                    currentPosition = 3;
+                }
+                setActionBarTitle(currentPosition);
+                drawerList.setItemChecked(currentPosition,true);
+            }
+        });
+
 
     }
 
@@ -188,4 +227,9 @@ public class MainActivity extends AppCompatActivity  {
         shareActionProvider.setShareIntent(intent);
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("position",currentPosition);
+    }
 }
